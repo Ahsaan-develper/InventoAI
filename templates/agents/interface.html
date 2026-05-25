@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InventoAI Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .message { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .recording { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); } 50% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); } }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+
+    <div class="max-w-4xl mx-auto h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 border-b border-blue-900/50 p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg">InventoAI Agent</h1>
+                    <p class="text-blue-400 text-xs">Ask about any product</p>
+                </div>
+            </div>
+            
+            <!-- Mode Toggle -->
+            <div class="flex bg-slate-800 rounded-lg p-1">
+                <button id="chatMode" onclick="setMode('chat')" class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white transition">💬 Chat</button>
+                <button id="voiceMode" onclick="setMode('voice')" class="px-4 py-2 rounded-md text-sm font-medium text-blue-300 hover:text-white transition">🎤 Voice</button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chatArea" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Welcome -->
+            <div class="message flex gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shrink-0">🤖</div>
+                <div class="bg-slate-800 rounded-xl p-3 max-w-[80%]">
+                    <p class="text-white">Hi! I'm your AI shopping assistant. Ask me about any product!</p>
+                    <p class="text-blue-300 text-sm mt-1">Try: "How much are the shoes?" or "Show me all products"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Interface -->
+        <div id="voiceInterface" class="hidden flex-1 flex-col items-center justify-center p-8">
+            <div class="text-center space-y-6">
+                <div id="voiceStatus" class="text-blue-300 text-lg">Tap microphone to ask</div>
+                <button id="micBtn" onclick="toggleVoice()" class="w-20 h-20 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center transition recording">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                    </svg>
+                </button>
+                <p class="text-slate-500 text-sm">Example: "What is the price of shoes?"</p>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div id="inputArea" class="border-t border-slate-800 p-4">
+            <div class="flex gap-3">
+                <input type="text" id="messageInput" placeholder="Ask about a product..." 
+                       class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none"
+                       onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-medium transition">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = localStorage.getItem('ai_session') || 'sess_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('ai_session', sessionId);
+        
+        let currentMode = 'chat';
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('chatMode').className = mode === 'chat' ? 'px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white transition' : 'px-4 py-2 rounded-md text-sm font-medium text-blue-300 hover:text-white transition';
+            document.getElementById('voiceMode').className = mode === 'voice' ? 'px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white transition' : 'px-4 py-2 rounded-md text-sm font-medium text-blue-300 hover:text-white transition';
+            
+            if (mode === 'voice') {
+                document.getElementById('chatArea').classList.add('hidden');
+                document.getElementById('inputArea').classList.add('hidden');
+                document.getElementById('voiceInterface').classList.remove('hidden');
+                document.getElementById('voiceInterface').classList.add('flex');
+            } else {
+                document.getElementById('chatArea').classList.remove('hidden');
+                document.getElementById('inputArea').classList.remove('hidden');
+                document.getElementById('voiceInterface').classList.add('hidden');
+                document.getElementById('voiceInterface').classList.remove('flex');
+            }
+        }
+
+        function addMessage(role, text, isVoice = false) {
+            const area = document.getElementById('chatArea');
+            const div = document.createElement('div');
+            div.className = 'message flex gap-3';
+            const isUser = role === 'user';
+            div.innerHTML = `
+                <div class="w-8 h-8 ${isUser ? 'bg-slate-700' : 'bg-blue-600'} rounded-full flex items-center justify-center shrink-0 text-sm">
+                    ${isUser ? '👤' : '🤖'}
+                </div>
+                <div class="bg-slate-800 rounded-xl p-3 max-w-[80%]">
+                    ${isVoice ? '<span class="text-xs text-blue-400 mb-1 block">🎤 Voice</span>' : ''}
+                    <p class="text-white whitespace-pre-line">${text}</p>
+                </div>
+            `;
+            area.appendChild(div);
+            area.scrollTop = area.scrollHeight;
+        }
+
+      async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage('user', text);
+    input.value = '';
+
+    // Show typing
+    const typing = document.createElement('div');
+    typing.id = 'typing';
+    typing.className = 'message flex gap-3';
+    typing.innerHTML = `
+        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shrink-0">🤖</div>
+        <div class="bg-slate-800 rounded-xl p-3"><div class="flex gap-1"><div class="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style="animation-delay:0.1s"></div><div class="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style="animation-delay:0.2s"></div></div></div>
+    `;
+    document.getElementById('chatArea').appendChild(typing);
+
+    try {
+        const res = await fetch('/ai/api/chat/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: text, session_id: sessionId})
+        });
+        const data = await res.json();
+        
+        document.getElementById('typing').remove();
+        
+        //  FIXED: Check for response or error
+        if (data.response) {
+            addMessage('assistant', data.response);
+        } else if (data.error) {
+            addMessage('assistant', 'Error: ' + data.error);
+        } else {
+            addMessage('assistant', 'Sorry, I got confused. Try again!');
+        }
+        
+    } catch (e) {
+        document.getElementById('typing').remove();
+        addMessage('assistant', 'Sorry, something went wrong: ' + e.message);
+    }
+}
+
+        async function toggleVoice() {
+            const btn = document.getElementById('micBtn');
+            const status = document.getElementById('voiceStatus');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.onstop = async () => {
+                        const blob = new Blob(audioChunks, {type: 'audio/webm'});
+                        await sendVoice(blob);
+                    };
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    btn.classList.add('bg-red-600');
+                    btn.classList.remove('bg-blue-600');
+                    status.textContent = 'Listening... Tap to stop';
+                    status.classList.add('text-red-400');
+                } catch (err) {
+                    status.textContent = 'Microphone access denied';
+                }
+            } else {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+                isRecording = false;
+                btn.classList.remove('bg-red-600');
+                btn.classList.add('bg-blue-600');
+                status.textContent = 'Processing...';
+                status.classList.remove('text-red-400');
+            }
+        }
+
+        async function sendVoice(blob) {
+            const formData = new FormData();
+            formData.append('audio', blob, 'voice.webm');
+            formData.append('session_id', sessionId);
+
+            try {
+                const res = await fetch('/ai/api/voice/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                document.getElementById('voiceStatus').textContent = 'Tap microphone to ask';
+                
+                // Switch to chat to show response
+                setMode('chat');
+                addMessage('user', data.user_text, true);
+                addMessage('assistant', data.ai_text);
+                
+                // Play audio response
+                if (data.audio_url) {
+                    new Audio(data.audio_url).play();
+                }
+            } catch (e) {
+                document.getElementById('voiceStatus').textContent = 'Error. Try again.';
+            }
+        }
+    </script>
+</body>
+</html>

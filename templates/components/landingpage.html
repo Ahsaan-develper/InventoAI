@@ -1,0 +1,219 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InventoAI — AI-Powered Inventory Management</title>
+    <meta name="description" content="InventoAI helps businesses track, predict, and optimize their inventory with the power of artificial intelligence. Real-time insights, smart forecasting, and seamless management.">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body>
+
+    <!-- ═══ HEADER / NAVBAR ═══ -->
+    {% include 'components/navbar.html' %}
+
+    <!-- ═══ HERO SECTION ═══ -->
+    <section class="hero" id="hero">
+        <!-- Animated Background -->
+        <div class="hero__bg">
+            <div class="hero__orb hero__orb--1"></div>
+            <div class="hero__orb hero__orb--2"></div>
+            <div class="hero__orb hero__orb--3"></div>
+        </div>
+        <div class="hero__grid"></div>
+
+        <div class="hero__content">
+            <div class="hero__badge" id="hero-badge">
+                <span class="hero__badge-dot"></span>
+                Powered by Artificial Intelligence
+            </div>
+
+            <h1 class="hero__title" id="hero-title">
+                Inventory Management,<br>
+                <span class="hero__title-highlight">Reimagined with AI</span>
+            </h1>
+
+            <p class="hero__subtitle" id="hero-subtitle">
+                Track every product, predict demand before it happens, and optimize your stock levels automatically. InventoAI brings intelligence to your warehouse.
+            </p>
+
+            <div class="hero__buttons">
+                <a href="{% url 'signup' %}" class="btn btn--primary btn--large" id="hero-cta-start">
+                    Start Free Trial
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="#features" class="btn btn--ghost btn--large" id="hero-cta-learn">
+                    Learn More
+                </a>
+            </div>
+
+            <!-- Stats Strip -->
+            <div class="hero__stats">
+                <div class="hero__stat">
+                    <div class="hero__stat-value">10K<span>+</span></div>
+                    <div class="hero__stat-label">Products Tracked</div>
+                </div>
+                <div class="hero__stat">
+                    <div class="hero__stat-value">99.9<span>%</span></div>
+                    <div class="hero__stat-label">Uptime</div>
+                </div>
+                <div class="hero__stat">
+                    <div class="hero__stat-value">3x</div>
+                    <div class="hero__stat-label">Faster Restocking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FEATURES SECTION ═══ -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section__header reveal">
+                <div class="section__tag">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Why InventoAI
+                </div>
+                <h2 class="section__title">Everything You Need to<br>Manage Inventory Smarter</h2>
+                <p class="section__desc">Powerful features designed to eliminate stockouts, reduce waste, and give you complete visibility over your operations.</p>
+            </div>
+
+            <div class="features__grid">
+                <!-- Feature 1 -->
+                <div class="feature-card reveal" id="feature-tracking">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Real-Time Tracking</h3>
+                    <p class="feature-card__desc">Monitor every item in your inventory with live updates. Know exactly what's in stock, what's moving, and what needs attention.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card reveal" id="feature-ai">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 2 1 3 2 4l-4 4v2h12v-2l-4-4c1-1 2-2 2-4a4 4 0 0 0-4-4z"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">AI Demand Forecasting</h3>
+                    <p class="feature-card__desc">Predict future demand using machine learning models trained on your data. Never overstock or run out again.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card reveal" id="feature-alerts">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Smart Alerts</h3>
+                    <p class="feature-card__desc">Get notified instantly when stock levels are low, items are expiring, or when anomalies are detected in your supply chain.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card reveal" id="feature-analytics">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Advanced Analytics</h3>
+                    <p class="feature-card__desc">Beautiful dashboards and reports that turn raw data into actionable insights. Understand trends at a glance.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card reveal" id="feature-voice">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Voice Assistant</h3>
+                    <p class="feature-card__desc">Interact with your inventory hands-free. Ask questions, add items, and get reports using our AI-powered voice bot.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card reveal" id="feature-security">
+                    <div class="feature-card__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Enterprise Security</h3>
+                    <p class="feature-card__desc">Role-based access, audit trails, and encryption keep your inventory data safe and compliant with industry standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CTA SECTION ═══ -->
+    <section class="cta" id="contact">
+        <div class="container">
+            <div class="cta__box reveal">
+                <h2 class="cta__title">Ready to Transform Your Inventory?</h2>
+                <p class="cta__desc">Join thousands of businesses that have already made the switch to AI-powered inventory management.</p>
+                <div class="cta__buttons">
+                    <a href="{% url 'signup' %}" class="btn btn--primary btn--large" id="cta-start-btn">
+                        Get Started — It's Free
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn--ghost btn--large" id="cta-demo-btn">Request a Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    {% include 'components/footer.html' %}
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+        // ── Navbar scroll effect ──
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ── Mobile menu toggle ──
+        const navToggle = document.getElementById('nav-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const navActions = document.getElementById('nav-actions');
+
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            navActions.classList.toggle('active');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.navbar__links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                navActions.classList.remove('active');
+            });
+        });
+
+        // ── Scroll reveal animation ──
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ── Smooth scroll for anchor links ──
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
